@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> upadateItem(int id, String name) async {
+  Future<void> updateItem(int id, String name) async {
     final response = await http.put(Uri.parse('$serverUrl/api/v1/items/$id'),
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            upadateItem(
+                                            updateItem(
                                                 item.id, nameController.text);
                                             setState(() {
                                               nameController.clear();
