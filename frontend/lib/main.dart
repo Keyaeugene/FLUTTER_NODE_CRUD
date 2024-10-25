@@ -78,6 +78,15 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> deleteItem(int id) async {
+    final response = await http.delete(
+      Uri.parse('$serverUrl/api/v1/items/$id'),
+    );
+    if (response.statusCode == 200) {
+      throw Exception("Failed to delete item");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,42 +104,53 @@ class _MyHomePageState extends State<MyHomePage> {
                       final item = snapshot.data![index];
                       return ListTile(
                           title: Text(item.name),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                      title: const Text('Edit Item'),
-                                      content: TextFormField(
-                                        controller: nameController,
-                                        decoration: const InputDecoration(
-                                          labelText: "Item name",
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            updateItem(
-                                                item.id, nameController.text);
-                                            setState(() {
-                                              nameController.clear();
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Edit'),
-                                        ),
-                                      ]);
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  onPressed: () async {
+                                    await deleteItem(item.id);
+                                    setState(() {});
+                                  },
+                                  icon: const Icon(Icons.delete)),
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                          title: const Text('Edit Item'),
+                                          content: TextFormField(
+                                            controller: nameController,
+                                            decoration: const InputDecoration(
+                                              labelText: "Item name",
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                updateItem(item.id,
+                                                    nameController.text);
+                                                setState(() {
+                                                  nameController.clear();
+                                                });
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text('Edit'),
+                                            ),
+                                          ]);
+                                    },
+                                  );
                                 },
-                              );
-                            },
+                              ),
+                            ],
                           ));
                     },
                   );
